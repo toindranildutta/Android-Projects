@@ -10,7 +10,7 @@ class ToDoViewModel : ViewModel() {
 
 
 fun getAllToDo() {
-    _toDoList.value = ToDoManager.getAllToDo()
+    _toDoList.value = ToDoManager.getAllToDo().reversed()
 
 }
 

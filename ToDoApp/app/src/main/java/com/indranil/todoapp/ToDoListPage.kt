@@ -26,8 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.text.SimpleDateFormat
@@ -43,13 +44,25 @@ fun ToDoListPage(modifier: Modifier = Modifier, viewModel: ToDoViewModel) {
     Column(
         modifier = modifier
             .fillMaxHeight()
-            .padding(8.dp)
+
     ) {
+        Text(
+            modifier = Modifier.fillMaxWidth()
+                .background(MaterialTheme.colorScheme.primary)
+                .padding(vertical = 8.dp),
+            textAlign = TextAlign.Center,
+            text = "To Do List",
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
         Row (
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+
         ) {
             OutlinedTextField(
                 modifier = Modifier.weight(1f),
@@ -57,23 +70,35 @@ fun ToDoListPage(modifier: Modifier = Modifier, viewModel: ToDoViewModel) {
                 onValueChange = {
                     inputText = it
                 })
-            Button(onClick = { /*TODO*/ },
-                modifier = Modifier.padding(start = 8.dp)) {
+            Button(onClick = {
+                viewModel.addToDo(inputText)
+                inputText = ""
+            },
+                modifier = Modifier.padding(start = 8.dp)
+            ) {
                 Text(text = "Add")
             }
         }
         toDoList?.let {
             LazyColumn {
                 itemsIndexed(it) { index, item ->
-                    ToDoItem(item)
+                    ToDoItem(item = item, onDelete = {
+                        viewModel.deleteToDo(item.id)
+                    })
+                    }
                 }
-        } }?:Text(text = "No ToDo")
+        } ?:Text(
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            text = "No Items Yet",
+            fontSize = 16.sp
+        )
     }
 }
 
 
 @Composable
-fun ToDoItem(item : ToDo) {
+fun ToDoItem(item : ToDo, onDelete: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -94,7 +119,7 @@ fun ToDoItem(item : ToDo) {
                 color = Color.White)
         }
         
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = onDelete) {
             Icon(painter = painterResource(id = R.drawable.baseline_delete_24),
                 contentDescription = "Delete",
                 tint = Color.White)
