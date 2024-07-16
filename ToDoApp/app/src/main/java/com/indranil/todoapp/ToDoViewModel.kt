@@ -3,25 +3,28 @@ package com.indranil.todoapp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.time.Instant
+import java.util.Date
 
 class ToDoViewModel : ViewModel() {
-    private var _toDoList = MutableLiveData<List<ToDo>>()
-    val toDoList: LiveData<List<ToDo>> = _toDoList
+    val toDoDao = MainApplication.toDoDatabase.getToDoDao()
 
+    val toDoList: LiveData<List<ToDo>> = toDoDao.getAllToDo()
 
-fun getAllToDo() {
-    _toDoList.value = ToDoManager.getAllToDo().reversed()
-
-}
 
 fun addToDo(title: String) {
-    ToDoManager.addToDo(title)
-    getAllToDo()
+    viewModelScope.launch(Dispatchers.IO) {
+        toDoDao.addToDo(ToDo(title = title, createdAt = Date.from(Instant.now())))
+    }
 }
 
 fun deleteToDo(id: Int) {
-    ToDoManager.deleteToDo(id)
-    getAllToDo()
+    viewModelScope.launch(Dispatchers.IO) {
+        toDoDao.deleteToDo(id)
+    }
 }
 
 }
