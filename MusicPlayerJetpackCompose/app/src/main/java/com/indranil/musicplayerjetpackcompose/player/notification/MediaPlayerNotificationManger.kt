@@ -1,5 +1,6 @@
 package com.indranil.musicplayerjetpackcompose.player.notification
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -37,14 +38,15 @@ class MediaPlayerNotificationManger @Inject constructor(
         mediaSession: MediaSession
     ) {
         buildNotification(mediaSession)
+        startForegroundNotificationService(mediaSessionService)
     }
 
 
-    /*
-    Start Here
-     */
     private fun startForegroundNotificationService(mediaSessionService: MediaSessionService) {
-        sdfs
+        val notification = Notification.Builder(context, NOTIFICATION_CHANNEL_ID)
+            .setCategory(Notification.CATEGORY_SERVICE)
+            .build()
+        mediaSessionService.startForeground(NOTIFICATION_ID, notification)
     }
 
     @UnstableApi
