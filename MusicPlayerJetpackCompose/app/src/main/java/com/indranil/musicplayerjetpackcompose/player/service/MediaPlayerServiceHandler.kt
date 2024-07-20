@@ -142,4 +142,3 @@ class MediaPlayerServiceHandler @Inject constructor(
         data class Playing(val isPlaying: Boolean) : JetAudioState()
         data class CurrentPlaying(val mediaItemIndex: Int) : JetAudioState()
     }
-}
